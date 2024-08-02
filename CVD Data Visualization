@@ -1,0 +1,56 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+pip install Biopython
+from Bio import SeqIO
+
+
+#Dataset from: https://www.kaggle.com/datasets/anandhuh/latest-worldwide-vaccine-data
+
+df = pd.read_csv('Worldwide Vaccine Data.csv')
+df.head()
+
+df.describe()
+df.info()
+
+missing_value = df.isnull().sum()
+print(missing_value)
+
+
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+# loc_vaxed is DataFrame with the top 10 countries
+loc_vaxed = df.groupby('Country').agg({
+    'Total doses administered': 'sum',
+    "% of population vaccinated": 'sum',
+    "% of population fully vaccinated": 'sum'
+}).sort_values(by='Total doses administered', ascending=False).head(10)
+
+# Extract the top 10 countries and their corresponding data
+countries_top10 = loc_vaxed.index
+doses_top10 = loc_vaxed['Total doses administered']
+
+# Generate x locations for the bars
+x = np.arange(len(countries_top10))
+
+# Create the bar chart
+plt.figure(figsize=(12, 8))
+plt.bar(x, doses_top10, align='center', alpha=0.7, color='green')
+
+# Customize the graph
+plt.xticks(x, countries_top10, rotation='vertical')
+plt.ylabel('Total doses administered')
+plt.title('Top 10 Countries with the Most COVID-19 Vaccinations')
+plt.grid(axis='y', linestyle='--', alpha=0.7)  # Add horizontal grid lines with dashed lines
+
+# Adjust y-axis ticker; removes scientific-notation
+import matplotlib.ticker as ticker
+plt.gca().yaxis.set_major_formatter(ticker.StrMethodFormatter('{x:,.0f}'))
+
+
+# Show the plot
+plt.tight_layout()  # Adjust layout to make room for the rotated x-axis labels
+plt.show()
